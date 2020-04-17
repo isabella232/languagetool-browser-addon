@@ -48,7 +48,7 @@ function getCheckResult(markupList, metaData, callback, errorCallback) {
       }
       const req = new XMLHttpRequest();
       req.timeout = 60 * 1000; // milliseconds
-      const url = serverUrl + (serverUrl.endsWith("/") ? "check" : "/check");
+      const url = serverUrl + (serverUrl.endsWith("/") ? "api/check" : "/api/check");
       req.open('POST', url);
       req.setRequestHeader("Content-Type", "application/json");
       req.onload = function() {

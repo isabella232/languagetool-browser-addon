@@ -53,12 +53,13 @@ function renderStatus(statusHtml) {
 const loginLink = '<a class=loginLink id=loginLink href="#">Click here to log in first</a>';
 
 function renderLogin() {
-    document.getElementById('status').innerHTML = loginLink;
-    document.getElementById('loginLink').onclick = function () {
-        chrome.runtime.sendMessage({ action: "openNewTab",
-                                     url:     "http://localhost:2000/login/?plugin=true"});
-    };
-
+    Tools.getApiServerUrl(serverUrl => {
+        document.getElementById('status').innerHTML = loginLink;
+        document.getElementById('loginLink').onclick = function () {
+            chrome.runtime.sendMessage({ action: "openNewTab",
+                                         url:     serverUrl + "/login/?plugin=true"});
+        };
+    });
 }
 
 function restoreLanguagesSettings(tabs, callback) {
