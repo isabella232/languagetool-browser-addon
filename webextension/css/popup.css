@@ -276,3 +276,10 @@ hr {
 .privacyNoteDetails {
   color: #666666;
 }
+
+.loginLink {
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    line-height: 100px;
+}

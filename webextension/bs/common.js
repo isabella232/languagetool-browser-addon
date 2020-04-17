@@ -50,6 +50,7 @@ function getCheckResult(markupList, metaData, callback, errorCallback) {
       req.timeout = 60 * 1000; // milliseconds
       const url = serverUrl + (serverUrl.endsWith("/") ? "check" : "/check");
       req.open('POST', url);
+      req.setRequestHeader("Content-Type", "application/json");
       req.onload = function() {
           let response = req.response;
           if (!response) {
@@ -57,7 +58,7 @@ function getCheckResult(markupList, metaData, callback, errorCallback) {
               return;
           }
           if (req.status !== 200) {
-              errorCallback(chrome.i18n.getMessage("noValidResponseFromServer", [serverUrl, req.response, req.status]), "noValidResponseFromServer");
+              errorCallback(chrome.i18n.getMessage("noValidResponseFromServer", [serverUrl, req.response, req.status]), "noValidResponseFromServer", req.status);
               return;
           }
           callback(response);
@@ -81,6 +82,10 @@ function getCheckResult(markupList, metaData, callback, errorCallback) {
       } else {
           userAgent += "-unknown";
       }
+      let params = { input: text,
+                     'output-format': "languagetool", };
+      req.send(JSON.stringify(params));
+        /*
       let params = 'disabledRules=WHITESPACE_RULE' +   // needed because we might replace quoted text by spaces (see issue #25)
           '&useragent=' + userAgent;
       Tools.getStorage().get({
@@ -134,5 +139,6 @@ function getCheckResult(markupList, metaData, callback, errorCallback) {
             req.send(params);
         }
     });
+    */
   });
 }

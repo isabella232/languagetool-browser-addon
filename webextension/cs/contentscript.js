@@ -326,3 +326,16 @@ function simulateInput(inputElement) {
     inputElement.dispatchEvent(inputEvent);
     inputElement.dispatchEvent(changeEvent);
 }
+
+function checkLogin() {
+    var content = document.body.innerText;
+    if (content === "Login successful") {
+        chrome.runtime.sendMessage({ action: "closeThisTab" });
+    }
+}
+
+if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkLogin);
+} else {
+    checkLogin();
+}

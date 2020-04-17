@@ -18,7 +18,7 @@
  */
 "use strict";
 
-const defaultServerUrl = 'https://api.languagetool.org/v2';   // keep in sync with defaultServerUrl in popup.js
+const defaultServerUrl = 'http://localhost:2000/api/';   // keep in sync with defaultServerUrl in popup.js
 const httpUrlRegExp = new RegExp(
   /^https?:\/\/.+$/   // "http://localhost", "http://localhost.foo" etc is also okay
 );

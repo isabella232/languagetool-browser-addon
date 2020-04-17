@@ -50,6 +50,17 @@ function renderStatus(statusHtml) {
     document.getElementById('status').innerHTML = statusHtml;
 }
 
+const loginLink = '<a class=loginLink id=loginLink href="#">Click here to log in first</a>';
+
+function renderLogin() {
+    document.getElementById('status').innerHTML = loginLink;
+    document.getElementById('loginLink').onclick = function () {
+        chrome.runtime.sendMessage({ action: "openNewTab",
+                                     url:     "http://localhost:2000/login/?plugin=true"});
+    };
+
+}
+
 function restoreLanguagesSettings(tabs, callback) {
   sendMessageToTab(tabs[0].id, {action: "getLanguagesSettings"}, storedLanguages => {
     if (storedLanguages) {
@@ -129,6 +140,7 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
             const messageSanitized = DOMPurify.sanitize(m.message);
             const descriptionSanitized = DOMPurify.sanitize(m.rule.description);
             ruleIdToDesc[ruleIdSanitized] = descriptionSanitized;
+            const errColor = m.rule.color;
 
             const wordSanitized = contextSanitized.substr(errStart, errLen);
             let ignoreError = false;
@@ -162,7 +174,7 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
                             " title='" + chrome.i18n.getMessage("turnOffRule").replace(/'/, "&apos;") + "'></div>";
                 }
                 html += Tools.escapeHtml(messageSanitized);
-                html += renderContext(contextSanitized, errStart, errLen);
+                html += renderContext(contextSanitized, errStart, errLen, errColor);
                 html += renderReplacements(contextSanitized, m, createLinks);
                 html += "</div>\n";
                 html += "<hr>";
@@ -395,11 +407,20 @@ function getSaveLanguageVariantButton() {
     }
 }
 
+function contextStyle(errColor) {
+    if (errColor != null) {
+        return "style='color:" + errColor + "'";
+    } else {
+        return "";
+    }
+}
+
 // call only with sanitized context
-function renderContext(contextSanitized, errStart, errLen) {
+function renderContext(contextSanitized, errStart, errLen, errColor) {
     return "<div class='errorArea'>"
           + Tools.escapeHtml(contextSanitized.substr(0, errStart))
-          + "<span class='error'>" + Tools.escapeHtml(contextSanitized.substr(errStart, errLen)) + "</span>"
+          + "<span class='error'" + contextStyle(errColor) + ">"
+          + Tools.escapeHtml(contextSanitized.substr(errStart, errLen)) + "</span>"
           + Tools.escapeHtml(contextSanitized.substr(errStart + errLen))
           + "</div>";
 }
@@ -585,6 +606,11 @@ function handleCheckResult(response, tabs, callback) {
         Tools.track(tabs[0].url || pageUrlParam, "freshInstallReload");
         return;
     }
+    console.log(response);
+    if (response.status === 401) {
+        renderLogin();
+        return;
+    }
     if (response.message) {
         renderStatus(Tools.escapeHtml(DOMPurify.sanitize(response.message)));
         return;
@@ -599,8 +625,11 @@ function handleCheckResult(response, tabs, callback) {
     getCheckResult(response.markupList, response.metaData, function(resultText) {
         renderMatchesToHtml(resultText, response, tabs, callback);
         sendMessageToTab(tabs[0].id, { action: "showErrorNumberOnMarker", data: JSON.parse(resultText) }, function(response) {});
-    }, function(errorMessage, errorMessageCode) {
-        if (errorMessage.indexOf("code: 403") !== -1) {
+    }, function(errorMessage, errorMessageCode, status) {
+        if (status === 401) {
+            renderLogin();
+        }
+        else if (errorMessage.indexOf("code: 403") !== -1) {
             renderStatus("<p class='programError'>" + chrome.i18n.getMessage("couldNotLoginAtLTPlus") + "</p>" +
                          "<p class='errorMessageDetail'>" + Tools.escapeHtml(DOMPurify.sanitize(errorMessage)) + "</p>");
             document.getElementById("optionsLink").addEventListener("click", function() {
@@ -798,7 +827,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             function(error) {
               if (error) {
-                Tools.track("internal", `error on getActiveTab: ${error.message}`)
+                Tools.track("internal", `error on getActiveTab: ${error.message}`);
               }
             }
           );

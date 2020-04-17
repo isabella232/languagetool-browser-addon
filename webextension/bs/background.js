@@ -43,11 +43,18 @@ if (chrome && chrome.browserAction && chrome.browserAction.openPopup) {
 /* workaround handle for FF */
 chrome.runtime.onMessage.addListener(handleMessage);
 
+var prevTabId = null;
+
 function handleMessage(request, sender, sendResponse) {
   switch (request.action) {
     case "openNewTab": {
-      const { url } = request;
-      chrome.tabs.create({ url });
+        const { url } = request;
+        chrome.tabs.query({ active: true,
+                            currentWindow: true}, function (tabs) {
+            console.log(tabs);
+            prevTabId = tabs[0].id;
+        });
+        chrome.tabs.create({ url });
       return false;
     }
     case "getActiveTab": {
@@ -65,6 +72,12 @@ function handleMessage(request, sender, sendResponse) {
       );
       return true;
     }
+  case "closeThisTab": {
+      chrome.tabs.remove([sender.tab.id], function() {});
+      console.log('removing', prevTabId);
+      chrome.tabs.update(prevTabId, { active: true,
+                                      highlighted: true});
+  }
     default: {
       if (request.tabId) {
         // proxy msg from cs -> bg -> cs
