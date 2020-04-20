@@ -62,6 +62,15 @@ function renderLogin() {
     });
 }
 
+function getHeader() {
+    let html = '';
+    html += '<div class="headerCont">';
+    html += '<a id="portalLinkText" class="headerPortalLink" target="_blank">HyperSTE Portal</a>';
+    html += "<a id='portalLinkLogo' target='_blank'><img alt='logo' title='LanguageTool' id='ltIcon' /></a>";
+    html += '</div>';
+    return html;
+}
+
 function restoreLanguagesSettings(tabs, callback) {
   sendMessageToTab(tabs[0].id, {action: "getLanguagesSettings"}, storedLanguages => {
     if (storedLanguages) {
@@ -86,7 +95,7 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
         translatedLanguage = language;
     }
     let html = pageUrlParam.length > 0 ? '<a style="display:none;" id="closeLink" href="#"></a>' : '<a id="closeLink" href="#"></a>';
-    html += DOMPurify.sanitize(getLanguageSelector(languageCode));
+    html += getHeader();
     html += DOMPurify.sanitize(getSaveLanguageVariantButton());
     html += '<div id="outerHint"></div>';
     html += "<hr>";
@@ -248,6 +257,10 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
             callback(response.markupList);
         }
     });
+    Tools.getApiServerUrl(serverUrl => {
+        document.getElementById('portalLinkText').href = serverUrl + "/portal/";
+        document.getElementById('portalLinkLogo').href = serverUrl + "/portal/";
+    });
 }
 
 function setHintListener() {
@@ -339,38 +352,6 @@ function showPremiumHint(usageCounter) {
           });
         });
     }
-}
-
-function getLanguageSelector(languageCode) {
-    // It might be better to get the languages from the API (but not for every check call):
-    const languages = [
-        "ast-ES", "be-BY", "br-FR", "ca-ES", "ca-ES-valencia", "zh-CN", "da-DK", "nl",
-        "en-US", "en-GB", "en-AU", "en-CA", "en-NZ", "en-ZA", "eo", "fr", "gl-ES",
-        "de-DE", "de-AT", "de-CH", "el-GR", "is-IS", "it", "ja-JP", "km-KH", "lt-LT", "ml-IN",
-        "fa", "pl-PL", "pt-PT", "pt-BR", "ro-RO", "ru-RU", "sk-SK",
-        "sl-SI", "es", "sv", "sr", "tl-PH", "ta-IN", "uk-UA"
-    ];
-    let html = "<div id='top'>";
-    html += chrome.i18n.getMessage("language");
-    html += "<input type='hidden' id='prevLanguage' name='prevLanguage' value='" + Tools.escapeHtml(languageCode) + "'>";
-    html += "&nbsp;<select id='language'>";
-    for (let l in languages) {
-        const langCode = languages[l];
-        const langCodeForTrans = languages[l].replace(/-/g, "_");
-        const selected = languageCode == langCode ? "selected" : "";
-        let translatedLang = chrome.i18n.getMessage(langCodeForTrans);
-        if (!translatedLang) {
-            translatedLang = chrome.i18n.getMessage(langCodeForTrans.replace(/_.*/, ""));
-        }
-        if (!translatedLang) {
-            translatedLang = Tools.getLangName(langCode);
-        }
-        html += "<option " + selected + " value='" + langCode + "'>" + translatedLang + "</option>";
-    }
-    html += "</select>";
-    html += "<a id='ltLink'><img alt='logo' title='LanguageTool' id='ltIcon' /></a>";
-    html += "</div>";
-    return html;
 }
 
 // call only with sanitized context
@@ -607,7 +588,6 @@ function handleCheckResult(response, tabs, callback) {
         Tools.track(tabs[0].url || pageUrlParam, "freshInstallReload");
         return;
     }
-    console.log(response);
     if (response.status === 401) {
         renderLogin();
         return;

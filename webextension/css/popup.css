@@ -283,3 +283,11 @@ hr {
     margin: 0 auto;
     line-height: 100px;
 }
+
+.headerCont {
+    height: 36px;
+}
+
+.headerPortalLink {
+    line-height: 36px;
+}
