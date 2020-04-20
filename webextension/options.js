@@ -50,24 +50,12 @@ function saveOptions() {
     const loginStatus = document.getElementById('loginStatus');
     if (!httpUrlRegExp.test(url)) {
         status.textContent = chrome.i18n.getMessage("invalidUrl");
-    } else if (document.getElementById('havePremiumAccount').checked &&
-              (document.getElementById('username').value.trim() === "" || document.getElementById('password').value.trim() === "")) {
-        loginStatus.textContent = chrome.i18n.getMessage("usernameAndPasswordNotSet");
     } else {
         status.textContent = '';
         Tools.getStorage().set({
             apiServerUrl: url,
             ignoreQuotedLines: document.getElementById('ignoreQuotedLines').checked,
-            havePremiumAccount: document.getElementById('havePremiumAccount').checked,
             autoCheck: document.getElementById('autoCheck').checked,
-            username: document.getElementById('username').value,
-            password: document.getElementById('password').value,
-            motherTongue: document.getElementById('motherTongue').value,
-            enVariant: document.getElementById('variant-en').value,
-            deVariant: document.getElementById('variant-de').value,
-            ptVariant: document.getElementById('variant-pt').value,
-            caVariant: document.getElementById('variant-ca').value,
-            dictionary: document.getElementById('dictionary').value.split("\n").filter(a => a.length > 0),
             disabledDomains: Array.from(new Set(  document.getElementById("domains").value.split("\n").filter(a => a.length > 0 && validURL(a)).map(item => domainName(item) || item))),
             ignoreCheckOnDomains: Array.from(new Set(  document.getElementById("ignoreCheckOnDomains").value.split("\n").filter(a => a.length > 0 && validURL(a)).map(item => domainName(item) || item))),
             autoCheckOnDomains: Array.from(new Set(  document.getElementById("autoCheckOnDomains").value.split("\n").filter(a => a.length > 0 && validURL(a)).map(item => domainName(item) || item)))
@@ -83,16 +71,6 @@ function restoreOptions() {
     document.getElementById('defaultServerLink').textContent = chrome.i18n.getMessage("defaultServerLink");
     document.getElementById('save').textContent = chrome.i18n.getMessage("save");
     document.getElementById('ignoreQuotedLinesDesc').innerHTML = chrome.i18n.getMessage("ignoreQuotedLines");
-    document.getElementById('havePremiumAccountDesc').innerHTML = chrome.i18n.getMessage("havePremiumAccountDesc", "https://languagetoolplus.com");
-    document.getElementById('usernameDesc').textContent = chrome.i18n.getMessage("username");
-    document.getElementById('passwordDesc').textContent = chrome.i18n.getMessage("password");
-    document.getElementById('motherTongueDesc').textContent = chrome.i18n.getMessage("motherTongueDesc");
-    document.getElementById('motherTongueExpl').textContent = chrome.i18n.getMessage("motherTongueExpl");
-    document.getElementById('variant-en-desc').textContent = chrome.i18n.getMessage("variantEnDesc");
-    document.getElementById('variant-de-desc').textContent = chrome.i18n.getMessage("variantDeDesc");
-    document.getElementById('variant-pt-desc').textContent = chrome.i18n.getMessage("variantPtDesc");
-    document.getElementById('variant-ca-desc').textContent = chrome.i18n.getMessage("variantCaDesc");
-    document.getElementById('dictionaryDesc').textContent = chrome.i18n.getMessage("dictionaryDesc");
     document.getElementById('autoCheckDesc').textContent = chrome.i18n.getMessage("autoCheckDesc");
     document.getElementById('domainsDesc').textContent = chrome.i18n.getMessage("domainsDesc");
     document.getElementById('autoCheckOnDomainsDesc').textContent = chrome.i18n.getMessage("autoCheckOnDomainsDesc");
@@ -101,38 +79,21 @@ function restoreOptions() {
         apiServerUrl: defaultServerUrl,
         autoCheck: false,
         ignoreQuotedLines: true,
-        havePremiumAccount: false,
-        username: "",
-        password: "",
-        motherTongue: "",
         enVariant: "en-US",
         deVariant: "de-DE",
         ptVariant: "pt-PT",
         caVariant: "ca-ES",
-        dictionary: [],
         disabledDomains: [],
         ignoreCheckOnDomains: [],
         autoCheckOnDomains: []
     }, function(items) {
         document.getElementById('apiServerUrl').value = items.apiServerUrl;
         document.getElementById('ignoreQuotedLines').checked = items.ignoreQuotedLines;
-        document.getElementById('havePremiumAccount').checked = items.havePremiumAccount;
-        document.getElementById('username').value = items.username;
-        document.getElementById('password').value = items.password;
-        setPremium(items.havePremiumAccount);
-        document.getElementById('motherTongue').value = items.motherTongue;
-        document.getElementById('variant-en').value = items.enVariant;
-        document.getElementById('variant-de').value = items.deVariant;
-        document.getElementById('variant-pt').value = items.ptVariant;
-        document.getElementById('variant-ca').value = items.caVariant;
-        //document.getElementById('variant-ca-desc').value = items.caVariant;
-        const dict = items.dictionary.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         const domains = items.disabledDomains.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         const autoCheckOnDomains = items.autoCheckOnDomains.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         const ignoreCheckOnDomains = items.ignoreCheckOnDomains.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         document.getElementById('autoCheck').checked = items.autoCheck;
         setAutoCheck(items.autoCheck);
-        document.getElementById('dictionary').value = dict.join("\n") + "\n";
         document.getElementById('domains').value = domains.join("\n") + "\n";
         document.getElementById('autoCheckOnDomains').value = autoCheckOnDomains.join("\n") + "\n";
         document.getElementById('ignoreCheckOnDomains').value = ignoreCheckOnDomains.join("\n") + "\n";
@@ -151,29 +112,12 @@ function useDefaultServer(evt) {
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.getElementById('save').addEventListener('click', saveOptions);
 document.getElementById('defaultServerLink').addEventListener('click', useDefaultServer);
-document.getElementById('havePremiumAccount').addEventListener('click', toggleHavePremiumCheckbox);
 document.getElementById('autoCheck').addEventListener('click', toggleAutoCheckCheckbox);
 document.getElementById('apiServerUrl').addEventListener('change', showPrivacyLink);
 document.getElementById('apiServerUrl').addEventListener('keyup', showPrivacyLink);
 
-function toggleHavePremiumCheckbox() {
-    setPremium(this.checked);
-}
-
 function toggleAutoCheckCheckbox() {
     setAutoCheck(this.checked);
-}
-
-function setPremium(enabled) {
-    if (enabled) {
-        document.getElementById('ltPlusAccess').style.display = "block";
-        document.getElementById('ltServer').style.display = "none";
-        document.getElementById('username').focus();
-    } else {
-        document.getElementById('ltPlusAccess').style.display = "none";
-        document.getElementById('ltServer').style.display = "block";
-        document.getElementById('loginStatus').textContent = "";
-    }
 }
 
 function setAutoCheck(enabled) {
