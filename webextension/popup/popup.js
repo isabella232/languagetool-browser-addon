@@ -174,14 +174,10 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
                 }
             } else {
                 html += "<div class=\"suggestionRow " + suggestionClass(m) + "\">\n";
-                if (isSpellingError(m)) {
+                if (m.rule.id === "non-listed") {
                     const escapedWord = Tools.escapeHtml(wordSanitized);
                     html += "<div class='addToDict' data-addtodict='" + escapedWord + "'" +
                             " title='" + chrome.i18n.getMessage("addToDictionaryTitle", escapedWord).replace(/'/, "&apos;") + "'></div>";
-                } else {
-                    html += "<div class='turnOffRule' data-ruleIdOff='" + Tools.escapeHtml(ruleIdSanitized) + "'" +
-                            " data-ruleDescription='" + Tools.escapeHtml(descriptionSanitized) + "'" +
-                            " title='" + chrome.i18n.getMessage("turnOffRule").replace(/'/, "&apos;") + "'></div>";
                 }
                 html += Tools.escapeHtml(messageSanitized);
                 html += renderContext(contextSanitized, errStart, errLen, errColor);
@@ -239,12 +235,6 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
         renderStatus(html);
 
         document.getElementById('ltIcon').src = chrome.extension.getURL("images/logo34x34.png");
-        if (items.havePremiumAccount) {
-            document.getElementById('ltLink').href = "https://languagetoolplus.com";
-        } else {
-            document.getElementById('ltLink').href = "https://languagetool.org";
-        }
-        document.getElementById('ltLink').target = "_blank";
         setHintListener();
         if (disabledOnThisDomain) {
             setReactivateIconListener(response.url || pageUrlParam, tabs);
@@ -442,54 +432,9 @@ function renderReplacements(contextSanitized, m, createLinks) {
 }
 
 function addLinkListeners(response, tabs, languageCode) {
-    document.getElementById("language").addEventListener("change", function() {
-        const prevLanguage = document.getElementById("prevLanguage").value;
-        if (!initLanguage) initLanguage = prevLanguage;
-        manuallySelectedLanguage = document.getElementById("language").value;
-        sendMessageToTab(tabs[0].id, {
-            action: "saveLanguagesSettings",
-            data: {
-                initLanguage : initLanguage,
-                manuallySelectedLanguage: manuallySelectedLanguage
-            }
-        });
-
-        const langSwitch = prevLanguage + " -> " + manuallySelectedLanguage;
-        doCheck(tabs, "switch_language", langSwitch);
-    });
     document.getElementById("closeLink").addEventListener("click", function() {
         self.close();
     });
-    const saveVariantLink = document.getElementById("saveVariantLink");
-    if (saveVariantLink) {
-        saveVariantLink.addEventListener("click", function(e) {
-            const languageGroup = saveVariantLink.getAttribute("data-languageGroup");
-            const languageVariant = saveVariantLink.getAttribute("data-languageVariant");
-
-            const options = {};
-            options[languageGroup + "Variant"] = languageVariant;
-            Tools.getStorage().set(options);
-
-            // update preferredVariants
-            let added = false;
-            for (let i = 0; i < preferredVariants.length; i++) {
-                if (preferredVariants[i].indexOf(languageGroup) === 0) {
-                    preferredVariants[i] = languageVariant;
-                    added = true;
-                    break;
-                }
-            }
-
-            if (!added) {
-                preferredVariants.push(languageVariant);
-            }
-
-            initLanguage = languageVariant;
-
-            document.getElementById("saveVariant").remove();
-            e.preventDefault();
-        });
-    }
     const closeLink2 = document.getElementById("close");
     if (closeLink2) {
       closeLink2.addEventListener("click", function() {
@@ -546,17 +491,11 @@ function addListenerActions(elements, tabs, response, languageCode) {
                 });
 
             } else if (link.getAttribute('data-addtodict')) {
-                storage.get({
-                    dictionary: []
-                }, function(items) {
-                    const dictionary = items.dictionary;
-                    dictionary.push(link.getAttribute('data-addtodict'));
-                    storage.set({'dictionary': dictionary}, function() {
-                      closePopupAfterRecheck = true;
-                      reCheck(tabs, "add_to_dict")
-                    });
+                addCandidate(link.getAttribute('data-addtodict'), function (res) {
+                    reCheck(tabs, "add_to_dict");
+                }, function (err) {
+                    console.info(err);
                 });
-
             } else if (link.getAttribute('data-errortext')) {
                 const data = {
                     action: 'applyCorrection',

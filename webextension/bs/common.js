@@ -27,6 +27,38 @@ Tools.getStorage().get({
   ignoreQuotedLines = items.ignoreQuotedLines;
 });
 
+function addCandidate(word, callback, errorCallback) {
+    Tools.getApiServerUrl(serverUrl => {
+        const req = new XMLHttpRequest();
+        const url = serverUrl + (serverUrl.endsWith("/") ? "api/candidate" : "/api/candidate");
+        req.open('POST', url);
+        req.setRequestHeader("Content-Type", "application/json");
+        req.onload = function() {
+          let response = req.response;
+          if (!response) {
+              errorCallback(chrome.i18n.getMessage("noResponseFromServer", serverUrl), "noResponseFromServer");
+              return;
+          }
+          if (req.status !== 200) {
+              errorCallback(chrome.i18n.getMessage("noValidResponseFromServer", [serverUrl, req.response, req.status]), "noValidResponseFromServer", req.status);
+              return;
+          }
+          callback(response);
+      };
+      req.onerror = function() {
+          errorCallback(chrome.i18n.getMessage("networkError", serverUrl), "networkError");
+      };
+      req.ontimeout = function() {
+          errorCallback(chrome.i18n.getMessage("timeoutError", serverUrl), "timeoutError");
+      };
+      let params = { 'subterms': [{ 'category': 'singular',
+                                    'word': word}],
+                     'term': {'part-of-speech': 'noun',
+                              'approved': true}};
+      req.send(JSON.stringify(params));
+    });
+}
+
 function getCheckResult(markupList, metaData, callback, errorCallback) {
     Tools.getApiServerUrl(serverUrl => {
       const startTime = new Date().getTime();

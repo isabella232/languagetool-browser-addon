@@ -233,8 +233,8 @@
     "description": "Link shown in the popup to accept a word to the internal dictionary"
   },
   "addToDictionaryTitle": {
-    "message": "add \"$word$\" to personal dictionary",
-    "description": "Title hover shown in the popup to append a word into the internal dictionary",
+    "message": "add \"$word$\" as a candidate",
+    "description": "Title hover shown in the popup to append a word to dictionary as a candidate",
     "placeholders": {
       "word": {
         "content": "$1",
