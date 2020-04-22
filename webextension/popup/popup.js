@@ -180,7 +180,7 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
                             " title='" + chrome.i18n.getMessage("addToDictionaryTitle", escapedWord).replace(/'/, "&apos;") + "'></div>";
                 }
                 html += Tools.escapeHtml(messageSanitized);
-                html += renderContext(contextSanitized, errStart, errLen, errColor);
+                html += renderContext(contextSanitized, m.term, errStart, errLen, errColor);
                 html += renderReplacements(contextSanitized, m, createLinks);
                 html += "</div>\n";
                 html += "<hr>";
@@ -388,10 +388,14 @@ function contextStyle(errColor) {
 }
 
 // call only with sanitized context
-function renderContext(contextSanitized, errStart, errLen, errColor) {
+function renderContext(contextSanitized, term, errStart, errLen, errColor) {
     return "<div class='errorArea'>"
           + Tools.escapeHtml(contextSanitized.substr(0, errStart))
-          + "<span class='error'" + contextStyle(errColor) + ">"
+          + "<span class='error'" + contextStyle(errColor)
+          + "title='"
+          + "Definition: " + term.definition + "\n"
+          + "Approved example: " + term["approved-example"] + "\n"
+          + "Hint: " + term.hint + "\n" + "'>"
           + Tools.escapeHtml(contextSanitized.substr(errStart, errLen)) + "</span>"
           + Tools.escapeHtml(contextSanitized.substr(errStart + errLen))
           + "</div>";
