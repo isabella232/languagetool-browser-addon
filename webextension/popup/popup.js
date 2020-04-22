@@ -173,7 +173,7 @@ function renderMatchesToHtml(resultJson, response, tabs, callback) {
                     ignoredRuleCounts[ruleIdSanitized] = 1;
                 }
             } else {
-                html += "<div class=\"suggestionRow " + suggestionClass(m) + "\">\n";
+                html += "<div class=\"suggestionRow\" style=\"border-left-color:" + m.rule.color + "\">\n";
                 if (m.rule.id === "non-listed") {
                     const escapedWord = Tools.escapeHtml(wordSanitized);
                     html += "<div class='addToDict' data-addtodict='" + escapedWord + "'" +

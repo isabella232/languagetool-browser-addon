@@ -252,6 +252,7 @@ hr {
 .suggestionRow {
   padding: 8px;
   margin-bottom: 8px;
+  border-left-style: solid;
 }
 
 .suggestionActiveRow {
