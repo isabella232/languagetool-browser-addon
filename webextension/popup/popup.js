@@ -1,4 +1,4 @@
-/* LanguageTool WebExtension
+/* HyperSTE WebExtension
  * Copyright (C) 2016-2017 Daniel Naber (http://www.danielnaber.de)
  *
  * This library is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ function getHeader() {
     let html = '';
     html += '<div class="headerCont">';
     html += '<a id="portalLinkText" class="headerPortalLink" target="_blank">HyperSTE Portal</a>';
-    html += "<a id='portalLinkLogo' target='_blank'><img alt='logo' title='LanguageTool' id='ltIcon' /></a>";
+    html += "<a id='portalLinkLogo' target='_blank'><img alt='logo' title='HyperSTE' id='ltIcon' /></a>";
     html += '</div>';
     return html;
 }
@@ -644,7 +644,7 @@ function startCheckMaybeWithWarning(tabs) {
             } else {
                 let message = "<p>";
                 if (serverUrl === defaultServerUrl) {
-                    message += chrome.i18n.getMessage("privacyNoteForDefaultServer", ["https://languagetool.org", "https://languagetool.org/privacy/"]);
+                    message += chrome.i18n.getMessage("privacyNoteForDefaultServer", ["https://hyperste.com", "https://www.etteplan.com/privacy-statement"]);
                 } else {
                     message += chrome.i18n.getMessage("privacyNoteForOtherServer", serverUrl);
                 }

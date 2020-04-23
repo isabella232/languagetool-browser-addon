@@ -47,7 +47,7 @@
     }
   },
   "tooltip": {
-    "message": "Check the current selection\nor editable field with LanguageTool",
+    "message": "Check the current selection\nor editable field with HyperSTE",
     "description": "Tooltip shown when hovering over the extension icon."
   },
   "placeCursor1": {
@@ -149,7 +149,7 @@
     "description": "Error message shown when no text was found"
   },
   "noTextFoundDetails": {
-    "message": "You don't seem to be inside a text area. If you're using an online office software, this add-on might not work there. Please check if the online office supports add-ons which provide support for LanguageTool.",
+    "message": "You don't seem to be inside a text area. If you're using an online office software, this add-on might not work there. Please check if the online office supports add-ons which provide support for HyperSTE.",
     "description": "More detailed error message shown when no text was found"
   },
   "shortcutHint": {
@@ -315,7 +315,7 @@
     }
   },
   "privacyNoteForDefaultServer2": {
-    "message": "You can change the server in the add-on configuration. For example, you can also use a local server, if you have set up LanguageTool locally.",
+    "message": "You can change the server in the add-on configuration. For example, you can also use a local server, if you have set up HyperSTE locally.",
     "description": "Shown on first start of extension to make user aware of privacy issues when using the default server on languagetool.org"
   },
   "privacyNoteForOtherServer": {
