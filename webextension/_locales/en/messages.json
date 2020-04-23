@@ -337,7 +337,7 @@
     "description": "Link shown below the privacy note on first use"
   },
   "serverText": {
-    "message": "LanguageTool API server URL:",
+    "message": "HyperSTE API server URL:",
     "description": "Options dialog: description of the text field for the API server URL"
   },
   "invalidUrl": {

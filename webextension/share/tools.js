@@ -1,4 +1,4 @@
-/* LanguageTool WebExtension
+/* HyperSTE WebExtension
  * Copyright (C) 2015 Daniel Naber (http://www.danielnaber.de)
  *
  * This library is free software; you can redistribute it and/or
@@ -51,12 +51,12 @@ class Tools {
     static getApiServerUrl(callback) {
         const storage = Tools.getStorage();
         storage.get({
-            apiServerUrl: 'https://api.languagetool.org/v2',
+            apiServerUrl: 'https://portal.hyperste.com',
             havePremiumAccount: false
         }, function(items) {
             let serverUrl = items.apiServerUrl;
             if (items.havePremiumAccount) {
-                serverUrl = 'https://languagetoolplus.com/api/v2';
+                serverUrl = 'https://portal.hyperste.com';
             }
             callback(serverUrl);
         });

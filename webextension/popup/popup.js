@@ -18,7 +18,7 @@
  */
 "use strict";
 
-const defaultServerUrl = 'https://api.languagetool.org/v2';   // keep in sync with defaultServerUrl in options.js
+const defaultServerUrl = 'https://portal.hyperste.com';   // keep in sync with defaultServerUrl in options.js
 const oldDefaultServerUrl = 'https://languagetool.org/api/v2';
 const defaultPremiumServerUrl = 'https://languagetoolplus.com/api/v2';
 const thisExtensionUrl = "https://chrome.google.com/webstore/detail/languagetool/oldceeleldhonbafppcapldpdifcinji";

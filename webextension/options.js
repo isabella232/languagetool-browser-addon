@@ -1,4 +1,4 @@
-/* LanguageTool WebExtension
+/* HyperSTE WebExtension
  * Copyright (C) 2016-2017 Daniel Naber (http://www.danielnaber.de)
  *
  * This library is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
  */
 "use strict";
 
-const defaultServerUrl = 'http://localhost:2000/api/';   // keep in sync with defaultServerUrl in popup.js
+const defaultServerUrl = 'https://portal.hyperste.com';   // keep in sync with defaultServerUrl in popup.js
 const httpUrlRegExp = new RegExp(
   /^https?:\/\/.+$/   // "http://localhost", "http://localhost.foo" etc is also okay
 );

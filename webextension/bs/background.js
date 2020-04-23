@@ -1,5 +1,5 @@
 
-chrome.runtime.setUninstallURL("https://languagetool.org/webextension/uninstall.php");
+chrome.runtime.setUninstallURL("https://hyperste.com");
 
 // would require "management" permission:
 //chrome.management.onUninstalled.addListener(function() {
