@@ -413,6 +413,8 @@ function renderReplacements(contextSanitized, m, createLinks) {
     let i = 0;
     for (let idx in replacements) {
         const replacementSanitized = DOMPurify.sanitize(replacements[idx]);
+        const appExample = DOMPurify.sanitize(m.replacements[idx]['approved-example']);
+        const nappExample = DOMPurify.sanitize(m.replacements[idx]['non-approved-example']);
         if (i >= 7) {
             // showing more suggestions usually doesn't make sense
             break;
@@ -422,6 +424,8 @@ function renderReplacements(contextSanitized, m, createLinks) {
         }
         if (createLinks) {
             html += "<a class='replacement' href='#'" +
+                    "title='" + "Approved example: "  + appExample + "\n" +
+                    "Non-approved example: " + nappExample + "'" +
                     " data-ruleid='" + ruleIdSanitized + "'" +
                     " data-erroroffset='" + errOffset + "'" +
                     " data-errortext='" + Tools.escapeHtml(errorTextSanitized) + "'" +
