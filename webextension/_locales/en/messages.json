@@ -69,7 +69,7 @@
     "description": "Error message shown when the extension button is clicked but cursor is not an editable field and there's no selection either."
   },
   "noReplacementPossible": {
-    "message": "Sorry, LanguageTool extension could not find error context in text",
+    "message": "Sorry, HyperSTE extension could not find error context in text",
     "description": "Error message shown when the extension could not apply the suggestion selected by the user. May happen under some circumstances when editing HTML."
   },
   "noReplacementPossible2": {
@@ -199,7 +199,7 @@
     "description": "Text added after noErrorsFound on the first few checks"
   },
   "textCheckedRemotely": {
-    "message": "Text checked remotely by <a target='_blank' href='$url$'>languagetool.org</a>",
+    "message": "Text checked remotely by <a target='_blank' href='$url$'>hyperste.com</a>",
     "description": "Text shown in the popup to make the user aware of which remote service was used to check their text",
     "placeholders": {
       "url": {
